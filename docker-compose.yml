@@ -37,7 +37,7 @@ services:
     networks:
       - portfolio
     ports:
-      - "3307:3307"
+      - "3307:3306"
 
 networks:
   portfolio:

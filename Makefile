@@ -6,7 +6,10 @@
 
 # Środowisko LOCAL
 local: setup-env-local
-	docker-compose -f docker-compose.local.yml up -d
+	docker-compose -f docker-compose.yml up -d
+
+local-no-d:
+	docker-compose -f docker-compose.yml up
 
 local-build: setup-env-local
 	@if [ ! -f docker-compose.yml ]; then \
@@ -16,9 +19,9 @@ local-build: setup-env-local
 	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-local:
-	@if [ ! -f .env ]; then \
-		echo "Kopiowanie .env.local do .env..."; \
-		cp .env.local .env; \
+	@if [ ! -f src/.env ]; then \
+		echo "Kopiowanie .env do src/.env..."; \
+		cp .env src/.env; \
 	fi
 
 # Środowisko DEV
