@@ -1,0 +1,47 @@
+# =================================
+# Pliki projektowe Portfolio
+# =================================
+cv_content.md
+.env
+.env.local
+.env.dev
+.env.prod
+.idea
+
+# =================================
+# Laravel application w src/
+# =================================
+src/.env
+src/.env.local
+src/.env.dev
+src/.env.prod
+src/storage/
+src/bootstrap/cache/
+src/public/storage
+src/public/hot
+
+# =================================
+# Dependencies
+# =================================
+src/vendor/
+src/node_modules/
+
+# =================================
+# IDE & OS
+# =================================
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# =================================
+# Docker
+# =================================
+.docker/
+docker/mysql/data/
+
+# =================================
+# Logs
+# =================================
+*.log
