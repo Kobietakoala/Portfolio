@@ -6,6 +6,7 @@ cv_content.md
 .env.local
 .env.dev
 .env.prod
+.idea
 
 # =================================
 # Laravel application w src/

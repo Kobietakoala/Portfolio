@@ -95,7 +95,7 @@ logs-nginx:
 
 # Shell do kontenera PHP
 shell:
-	docker-compose exec app sh
+	docker-compose exec --user www app sh
 
 # =================================
 # Polecenia Composer
@@ -111,7 +111,7 @@ composer-require:
 	docker-compose exec app composer require $(package)
 
 composer-dump:
-	docker-compose exec app composer dump-autoload
+	docker-compose exec --user www app composer dump-autoload --optimize
 
 # =================================
 # Polecenia NPM/Node
@@ -153,10 +153,11 @@ seed:
 
 # Cache
 cache-clear:
-	docker-compose exec app php artisan cache:clear
-	docker-compose exec app php artisan config:clear
-	docker-compose exec app php artisan view:clear
-	docker-compose exec app php artisan route:clear
+	@echo "🗑️  Czyszczenie cache Laravel..."
+	docker-compose exec --user www app php artisan cache:clear
+	docker-compose exec --user www app php artisan config:clear
+	docker-compose exec --user www app php artisan route:clear
+	docker-compose exec --user www app php artisan view:clear
 
 cache-config:
 	docker-compose exec app php artisan config:cache
@@ -195,7 +196,7 @@ test-coverage:
 	docker-compose exec app php artisan test --coverage
 
 # =================================
-# Narzędzia deweloperskie
+# Narzędzia dewelperskie
 # =================================
 
 # Tinker

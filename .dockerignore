@@ -1,0 +1,42 @@
+# Node.js
+**/node_modules
+**/npm-debug.log
+**/yarn-error.log
+**/yarn.lock
+**/.npm
+**/.yarn
+
+# Laravel
+**/vendor
+**/storage/logs
+**/storage/framework/cache
+**/storage/framework/sessions
+**/storage/framework/testing
+**/storage/framework/views
+**/bootstrap/cache
+
+# Environment files
+**/.env
+**/.env.*
+
+# IDE files
+**/.vscode
+**/.idea
+**/*.swp
+**/*.swo
+
+# OS generated files
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+**/.git
+**/.gitignore
+
+# Build artifacts
+**/dist
+**/build
+**/public/build
+
+# Test coverage
+**/coverage
