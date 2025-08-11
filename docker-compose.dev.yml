@@ -1,7 +1,7 @@
 services:
   app:
     environment:
-      - APP_ENV=LOCAL
+      - APP_ENV=DEV
     build:
       context: .
       dockerfile: docker/php/Dockerfile

@@ -23,10 +23,18 @@ setup-env-local:
 
 # Środowisko DEV
 dev: setup-env-dev
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+		cp docker-compose.dev.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d
 
 dev-build: setup-env-dev
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+		cp docker-compose.dev.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-dev:
 	@if [ ! -f src/.env ]; then \
@@ -36,10 +44,18 @@ setup-env-dev:
 
 # Środowisko PROD
 prod: setup-env-prod
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
+		cp docker-compose.prod.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d
 
 prod-build: setup-env-prod
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
+		cp docker-compose.prod.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-prod:
 	@if [ ! -f src/.env ]; then \

@@ -1,0 +1,83 @@
+services:
+  app:
+    environment:
+      - APP_ENV=PROD
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: portfolio-app
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www:ro
+      - app_storage:/var/www/storage
+      - app_cache:/var/www/bootstrap/cache
+    networks:
+      - portfolio
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "php", "-v" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  webserver:
+    image: nginx:alpine
+    container_name: portfolio-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./src:/var/www:ro
+      - ./docker/nginx/:/etc/nginx/conf.d/
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - portfolio
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  db:
+    image: mysql:8.0
+    container_name: portfolio-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - portfolio
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+networks:
+  portfolio:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  app_storage:
+  app_cache:
