@@ -6,19 +6,23 @@
 
 # Środowisko LOCAL
 local: setup-env-local
-	docker-compose -f docker-compose.local.yml up -d
+	docker-compose -f docker-compose.yml up -d
+
+local-no-d:
+	docker-compose -f docker-compose.yml up
 
 local-build: setup-env-local
-	@if [ ! -f docker-compose.yml ]; then \
-		echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
-		cp docker-compose.local.yml docker-compose.yml; \
-	fi
+	echo "Zatrzymywanie starych kontenerów..."; \
+	docker-compose down || true; \
+	echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
+	cp docker-compose.local.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
 
+
 setup-env-local:
-	@if [ ! -f .env ]; then \
-		echo "Kopiowanie .env.local do .env..."; \
-		cp .env.local .env; \
+	@if [ ! -f src/.env ]; then \
+		echo "Kopiowanie .env do src/.env..."; \
+		cp .env src/.env; \
 	fi
 
 # Środowisko DEV
@@ -30,17 +34,13 @@ dev: setup-env-dev
 	docker-compose -f docker-compose.yml up -d
 
 dev-build: setup-env-dev
-	@if [ ! -f docker-compose.yml ]; then \
-		echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
-		cp docker-compose.dev.yml docker-compose.yml; \
-	fi
+	echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+	cp docker-compose.dev.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-dev:
-	@if [ ! -f src/.env ]; then \
-		echo "Kopiowanie .env.dev do .env..."; \
-		cp .env.dev src/.env; \
-	fi
+	echo "Kopiowanie .env.dev do .env..."; \
+	cp .env.dev src/.env; \
 
 # Środowisko PROD
 prod: setup-env-prod
@@ -51,17 +51,34 @@ prod: setup-env-prod
 	docker-compose -f docker-compose.yml up -d
 
 prod-build: setup-env-prod
-	@if [ ! -f docker-compose.yml ]; then \
-		echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
-		cp docker-compose.prod.yml docker-compose.yml; \
-	fi
+	echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
+	cp docker-compose.prod.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-prod:
-	@if [ ! -f src/.env ]; then \
-		echo "Kopiowanie .env.prod do .env..."; \
-		cp .env.prod src/.env; \
-	fi
+	echo "Kopiowanie .env.prod do .env..."; \
+	cp .env.prod src/.env; \
+
+# =================================
+# Naprawa uprawnień
+# =================================
+
+fix-permissions:
+	@echo "🔧 Naprawianie uprawnień Laravel..."
+	@# Tworzenie katalogów jako root
+	docker-compose exec --user root app mkdir -p /var/www/storage/framework/{cache,sessions,testing,views} || true
+	docker-compose exec --user root app mkdir -p /var/www/storage/logs || true
+	docker-compose exec --user root app mkdir -p /var/www/bootstrap/cache || true
+	@# Ustawianie właściciela
+	docker-compose exec --user root app chown -R www:www /var/www/storage || true
+	docker-compose exec --user root app chown -R www:www /var/www/bootstrap/cache || true
+	@# Ustawianie uprawnień
+	docker-compose exec --user root app chmod -R 775 /var/www/storage || true
+	docker-compose exec --user root app chmod -R 775 /var/www/bootstrap/cache || true
+	@# Czyszczenie cache jeśli istnieje
+	docker-compose exec --user www app php artisan config:clear || true
+	docker-compose exec --user www app php artisan cache:clear || true
+	@echo "✅ Uprawnienia naprawione!"
 
 # =================================
 # Inicjalizacja projektów
@@ -112,6 +129,9 @@ logs-nginx:
 # Shell do kontenera PHP
 shell:
 	docker-compose exec --user www app sh
+
+shell-root:
+	docker-compose exec --user root app sh
 
 # =================================
 # Polecenia Composer
@@ -196,10 +216,10 @@ storage-link:
 # =================================
 
 breeze-install:
-	docker-compose exec app php artisan breeze:install
-	docker-compose exec app php artisan migrate
-	docker-compose exec app npm install
-	docker-compose exec app npm run dev
+	docker-compose exec --user root app php artisan breeze:install
+	docker-compose exec --user root app php artisan migrate
+	docker-compose exec --user root app npm install
+	docker-compose exec --user root app npm run dev
 
 # =================================
 # Testy

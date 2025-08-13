@@ -12,6 +12,8 @@ services:
       - ./src:/var/www
     networks:
       - portfolio
+    expose:
+      - 9000
 
   webserver:
     image: nginx:alpine
@@ -39,7 +41,7 @@ services:
     networks:
       - portfolio
     ports:
-      - "3307:3307"
+      - "3307:3306"
 
 networks:
   portfolio:

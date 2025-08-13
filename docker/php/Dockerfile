@@ -1,4 +1,5 @@
 FROM php:8.3-fpm
+ARG APP_ENV=development
 
 # Install system dependencies including Node.js
 RUN apt-get update && apt-get install -y \
@@ -30,21 +31,24 @@ RUN groupadd -g 1000 www || true \
     && sed -i 's/www-data/www/g' /usr/local/etc/php-fpm.d/www.conf
 
 # Copy composer files first for better caching
-COPY --chown=www:www ./src/composer.json ./src/composer.lock* ./
+COPY --chown=www:www ./src/composer.json ./
+COPY --chown=www:www ./src/package.json ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Copy package.json files for Node.js dependencies
-COPY --chown=www:www ./src/package.json ./src/package-lock.json* ./
-
-# Install Node.js dependencies
-RUN npm ci --only=production
+# Install dependencies based on environment (before copying all files)
+ARG APP_ENV
+RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
+        echo "🏭 Installing PRODUCTION dependencies..." && \
+        composer install --no-dev --optimize-autoloader --no-scripts; \
+    else \
+        echo "🔧 Installing DEVELOPMENT dependencies..." && \
+        composer install --optimize-autoloader --no-scripts; \
+    fi
 
 # Copy application code (excluding node_modules thanks to .dockerignore)
 COPY --chown=www:www ./src .
+COPY --chown=www:www . /var/www
 
-# Set proper permissions and create directories
+# Ensure critical directories exist and have proper permissions
 RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
@@ -52,8 +56,18 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
     && chmod -R 775 storage \
     && chmod -R 775 bootstrap/cache
 
-# Run Laravel post-install scripts
-RUN composer install --no-dev --optimize-autoloader
+# Install Node.js dependencies
+RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
+        npm ci --only=production; \
+    else \
+        npm install; \
+    fi
+
+# Run composer scripts now that we have the full application
+RUN composer dump-autoload --optimize
+
+# Final permissions fix
+RUN chown -R www:www /var/www && chmod -R 775 storage bootstrap/cache
 
 USER www
 
