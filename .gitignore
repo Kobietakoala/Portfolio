@@ -59,3 +59,11 @@ node_modules/
 # Build artifacts
 src/public/css/
 src/public/js/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
