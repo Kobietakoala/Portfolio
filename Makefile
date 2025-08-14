@@ -210,6 +210,11 @@ npm-watch:
 npm-hot:
 	docker-compose exec app npm run hot
 
+# Uruchom Vite dev server w trybie watch (nie blokuje terminala)
+vite-dev:
+	docker-compose exec -d app npm run dev
+
+
 # =================================
 # Polecenia Laravel
 # =================================

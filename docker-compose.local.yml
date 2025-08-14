@@ -16,6 +16,9 @@ services:
       - portfolio
     expose:
       - 9000
+    ports:
+      - "5173:5173"
+
 
   webserver:
     image: nginx:alpine
