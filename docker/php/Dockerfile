@@ -41,7 +41,8 @@ COPY --chown=www:www ./src/package.json ./
 
 # Install dependencies based on environment (before copying all files)
 ARG APP_ENV
-RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
+RUN APP_ENV_LOWER=$(echo "$APP_ENV" | tr '[:upper:]' '[:lower:]') && \
+    if [ "$APP_ENV_LOWER" = "production" ] || [ "$APP_ENV_LOWER" = "prod" ]; then \
         echo "🏭 Installing PRODUCTION dependencies..." && \
         composer install --no-dev --optimize-autoloader --no-scripts; \
     else \
@@ -51,7 +52,7 @@ RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
 
 # Copy application code (excluding node_modules thanks to .dockerignore)
 COPY --chown=www:www ./src .
-COPY --chown=www:www . /var/www
+#COPY --chown=www:www . /var/www
 
 COPY --chown=www:www ./docker/php/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -67,7 +68,8 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
 USER www
 
 # Install Node.js dependencies
-RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
+RUN APP_ENV_LOWER=$(echo "$APP_ENV" | tr '[:upper:]' '[:lower:]') && \
+    if [ "$APP_ENV_LOWER" = "production" ] || [ "$APP_ENV_LOWER" = "prod" ]; then \
         npm ci --only=production; \
     else \
         npm install; \
@@ -79,7 +81,7 @@ USER root
 RUN composer dump-autoload --optimize
 
 # Final permissions fix
-RUN chown -R www:www /var/www && chmod -R 775 storage bootstrap/cache
+RUN chown -R www:www storage bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
 USER www
 

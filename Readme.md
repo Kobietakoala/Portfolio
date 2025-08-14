@@ -225,3 +225,14 @@ Jeśli masz problemy:
 ## 📄 Licencja
 
 Ten projekt jest licencjonowany na zasadach Apache2 License.
+
+## Rozwiazywanie problemów
+
+Class "Laravel\Breeze\BreezeServiceProvider" not found  
+`make shell-root` \
+`rm -rf /var/www/node_modules`\
+`rm -rf /home/www/.npm`\
+`mkdir -p /home/www/.npm`\
+`mkdir -p /home/www/node_modules`\
+`chown -R www:www /home/www/.npm`\
+`chown -R www:www /home/www/node_modules`\
