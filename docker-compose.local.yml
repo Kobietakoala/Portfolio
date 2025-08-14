@@ -10,8 +10,15 @@ services:
     working_dir: /var/www
     volumes:
       - ./src:/var/www
+      - app_storage:/var/www/storage
+      - app_cache:/var/www/bootstrap/cache
     networks:
       - portfolio
+    expose:
+      - 9000
+    ports:
+      - "5173:5173"
+
 
   webserver:
     image: nginx:alpine
@@ -39,7 +46,7 @@ services:
     networks:
       - portfolio
     ports:
-      - "3307:3307"
+      - "3307:3306"
 
 networks:
   portfolio:
@@ -47,3 +54,5 @@ networks:
 
 volumes:
   mysql_data:
+  app_storage:
+  app_cache:

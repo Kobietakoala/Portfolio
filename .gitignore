@@ -40,8 +40,31 @@ Thumbs.db
 # =================================
 .docker/
 docker/mysql/data/
+docker-compose.yml
 
 # =================================
 # Logs
 # =================================
 *.log
+
+# Vite & Laravel Mix
+src/public/build/
+src/public/hot
+src/public/storage
+src/public/mix-manifest.json
+
+# Node modules
+src/node_modules/
+node_modules/
+
+# Build artifacts
+src/public/css/
+src/public/js/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

@@ -9,6 +9,7 @@ mkdir -p /var/www/storage/logs
 mkdir -p /var/www/storage/app/public
 
 # Ustawienie uprawnień
+chown -R www:www /var/www
 chmod -R 775 /var/www/storage
 chmod -R 775 /var/www/bootstrap/cache
 

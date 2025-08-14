@@ -6,9 +6,12 @@
 
 # Środowisko LOCAL
 local: setup-env-local
-	docker-compose -f docker-compose.local.yml up -d
+	docker-compose -f docker-compose.yml up -d
 
-local-build: setup-env-local
+local-no-d:
+	docker-compose -f docker-compose.yml up
+
+local-build: container-stop setup-env-local
 	@if [ ! -f docker-compose.yml ]; then \
 		echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
 		cp docker-compose.local.yml docker-compose.yml; \
@@ -17,9 +20,19 @@ local-build: setup-env-local
 
 setup-env-local:
 	@if [ ! -f .env ]; then \
-		echo "Kopiowanie .env.local do .env..."; \
+		echo "Kopiowanie .env,local do src/.env i .env"; \
+		cp .env.local src/.env; \
 		cp .env.local .env; \
 	fi
+
+local-build-overwrite: container-stop overwrite-env-local
+	echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
+	cp docker-compose.local.yml docker-compose.yml; \
+	docker-compose -f docker-compose.yml up -d --build
+
+overwrite-env-local:
+	cp .env.local src/.env; \
+	cp .env.local .env; \
 
 # Środowisko DEV
 dev: setup-env-dev
@@ -29,18 +42,28 @@ dev: setup-env-dev
 	fi
 	docker-compose -f docker-compose.yml up -d
 
-dev-build: setup-env-dev
+dev-build: container-stop setup-env-dev
 	@if [ ! -f docker-compose.yml ]; then \
 		echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
 		cp docker-compose.dev.yml docker-compose.yml; \
 	fi
-	docker-compose -f docker-compose.yml up -d --build
+	docker-compose -f docker-compose.yml up -d
 
 setup-env-dev:
-	@if [ ! -f src/.env ]; then \
+	@if [ ! -f .env ]; then \
 		echo "Kopiowanie .env.dev do .env..."; \
 		cp .env.dev src/.env; \
+		cp .env.dev .env; \
 	fi
+
+dev-build-overwrite: container-stop overwrite-env-local
+	echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+	cp docker-compose.dev.yml docker-compose.yml; \
+	docker-compose -f docker-compose.yml up -d --build
+
+overwrite-env-dev:
+	cp .env.dev src/.env; \
+	cp .env.dev .env; \
 
 # Środowisko PROD
 prod: setup-env-prod
@@ -50,7 +73,7 @@ prod: setup-env-prod
 	fi
 	docker-compose -f docker-compose.yml up -d
 
-prod-build: setup-env-prod
+prod-build: container-stop setup-env-prod
 	@if [ ! -f docker-compose.yml ]; then \
 		echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
 		cp docker-compose.prod.yml docker-compose.yml; \
@@ -58,10 +81,45 @@ prod-build: setup-env-prod
 	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-prod:
-	@if [ ! -f src/.env ]; then \
-		echo "Kopiowanie .env.prod do .env..."; \
+	echo "Kopiowanie .env.prod do .env..."; \
+	@if [ ! -f .env ]; then \
+		cp .env.prod .env; \
 		cp .env.prod src/.env; \
 	fi
+
+prod-build-overwrite: container-stop overwrite-env-local
+	echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+	cp docker-compose.prod.yml docker-compose.yml; \
+	docker-compose -f docker-compose.yml up -d --build
+
+overwrite-env-prod:
+	cp .env.prod src/.env; \
+	cp .env.prod .env; \
+
+container-stop:
+	echo "Zatrzymywanie starych kontenerów..."; \
+	docker-compose down || true; \
+
+# =================================
+# Naprawa uprawnień
+# =================================
+
+fix-permissions:
+	@echo "🔧 Naprawianie uprawnień Laravel..."
+	@# Tworzenie katalogów jako root
+	docker-compose exec --user root app mkdir -p /var/www/storage/framework/{cache,sessions,testing,views} || true
+	docker-compose exec --user root app mkdir -p /var/www/storage/logs || true
+	docker-compose exec --user root app mkdir -p /var/www/bootstrap/cache || true
+	@# Ustawianie właściciela
+	docker-compose exec --user root app chown -R www:www /var/www/storage || true
+	docker-compose exec --user root app chown -R www:www /var/www/bootstrap/cache || true
+	@# Ustawianie uprawnień
+	docker-compose exec --user root app chmod -R 775 /var/www/storage || true
+	docker-compose exec --user root app chmod -R 775 /var/www/bootstrap/cache || true
+	@# Czyszczenie cache jeśli istnieje
+	docker-compose exec --user www app php artisan config:clear || true
+	docker-compose exec --user www app php artisan cache:clear || true
+	@echo "✅ Uprawnienia naprawione!"
 
 # =================================
 # Inicjalizacja projektów
@@ -85,6 +143,7 @@ install:
 	make npm-install
 	make key-generate
 	make migrate
+	@echo "Projekt gotowy! Aplikacja dostępna pod: http://localhost:8000"
 
 # =================================
 # Zarządzanie kontenerami
@@ -112,6 +171,9 @@ logs-nginx:
 # Shell do kontenera PHP
 shell:
 	docker-compose exec --user www app sh
+
+shell-root:
+	docker-compose exec --user root app sh
 
 # =================================
 # Polecenia Composer
@@ -147,6 +209,11 @@ npm-watch:
 
 npm-hot:
 	docker-compose exec app npm run hot
+
+# Uruchom Vite dev server w trybie watch (nie blokuje terminala)
+vite-dev:
+	docker-compose exec -d app npm run dev
+
 
 # =================================
 # Polecenia Laravel
@@ -196,10 +263,10 @@ storage-link:
 # =================================
 
 breeze-install:
-	docker-compose exec app php artisan breeze:install
-	docker-compose exec app php artisan migrate
-	docker-compose exec app npm install
-	docker-compose exec app npm run dev
+	docker-compose exec --user www app php artisan breeze:install
+	docker-compose exec --user www app php artisan migrate
+	docker-compose exec --user www app npm install
+	docker-compose exec --user www app npm run dev
 
 # =================================
 # Testy

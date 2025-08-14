@@ -12,6 +12,8 @@ services:
       - ./src:/var/www
     networks:
       - portfolio
+    expose:
+      - 9000
 
   webserver:
     image: nginx:alpine
