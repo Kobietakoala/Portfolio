@@ -11,19 +11,28 @@ local: setup-env-local
 local-no-d:
 	docker-compose -f docker-compose.yml up
 
-local-build: setup-env-local
-	echo "Zatrzymywanie starych kontenerów..."; \
-	docker-compose down || true; \
+local-build: container-stop setup-env-local
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
+		cp docker-compose.local.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d --build
+
+setup-env-local:
+	@if [ ! -f .env ]; then \
+		echo "Kopiowanie .env,local do src/.env i .env"; \
+		cp .env.local src/.env; \
+		cp .env.local .env; \
+	fi
+
+local-build-overwrite: container-stop overwrite-env-local
 	echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
 	cp docker-compose.local.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
 
-
-setup-env-local:
-	@if [ ! -f src/.env ]; then \
-		echo "Kopiowanie .env do src/.env..."; \
-		cp .env src/.env; \
-	fi
+overwrite-env-local:
+	cp .env.local src/.env; \
+	cp .env.local .env; \
 
 # Środowisko DEV
 dev: setup-env-dev
@@ -33,14 +42,28 @@ dev: setup-env-dev
 	fi
 	docker-compose -f docker-compose.yml up -d
 
-dev-build: setup-env-dev
+dev-build: container-stop setup-env-dev
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+		cp docker-compose.dev.yml docker-compose.yml; \
+	fi
+	docker-compose -f docker-compose.yml up -d
+
+setup-env-dev:
+	@if [ ! -f .env ]; then \
+		echo "Kopiowanie .env.dev do .env..."; \
+		cp .env.dev src/.env; \
+		cp .env.dev .env; \
+	fi
+
+dev-build-overwrite: container-stop overwrite-env-local
 	echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
 	cp docker-compose.dev.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
 
-setup-env-dev:
-	echo "Kopiowanie .env.dev do .env..."; \
+overwrite-env-dev:
 	cp .env.dev src/.env; \
+	cp .env.dev .env; \
 
 # Środowisko PROD
 prod: setup-env-prod
@@ -50,16 +73,32 @@ prod: setup-env-prod
 	fi
 	docker-compose -f docker-compose.yml up -d
 
-prod-build: setup-env-prod
-	echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
-	cp docker-compose.prod.yml docker-compose.yml; \
+prod-build: container-stop setup-env-prod
+	@if [ ! -f docker-compose.yml ]; then \
+		echo "Kopiowanie docker-compose.prod.yml do docker-compose.yml"; \
+		cp docker-compose.prod.yml docker-compose.yml; \
+	fi
 	docker-compose -f docker-compose.yml up -d --build
 
 setup-env-prod:
 	echo "Kopiowanie .env.prod do .env..."; \
-	cp .env.prod .env; \
-	cp .env.prod src/.env; \
+	@if [ ! -f .env ]; then \
+		cp .env.prod .env; \
+		cp .env.prod src/.env; \
+	fi
 
+prod-build-overwrite: container-stop overwrite-env-local
+	echo "Kopiowanie docker-compose.dev.yml do docker-compose.yml"; \
+	cp docker-compose.prod.yml docker-compose.yml; \
+	docker-compose -f docker-compose.yml up -d --build
+
+overwrite-env-prod:
+	cp .env.prod src/.env; \
+	cp .env.prod .env; \
+
+container-stop:
+	echo "Zatrzymywanie starych kontenerów..."; \
+	docker-compose down || true; \
 
 # =================================
 # Naprawa uprawnień
