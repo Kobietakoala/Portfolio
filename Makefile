@@ -57,7 +57,9 @@ prod-build: setup-env-prod
 
 setup-env-prod:
 	echo "Kopiowanie .env.prod do .env..."; \
+	cp .env.prod .env; \
 	cp .env.prod src/.env; \
+
 
 # =================================
 # Naprawa uprawnień
