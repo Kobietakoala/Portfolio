@@ -257,10 +257,10 @@ storage-link:
 # =================================
 
 breeze-install:
-	docker-compose exec --user root app php artisan breeze:install
-	docker-compose exec --user root app php artisan migrate
-	docker-compose exec --user root app npm install
-	docker-compose exec --user root app npm run dev
+	docker-compose exec --user www app php artisan breeze:install
+	docker-compose exec --user www app php artisan migrate
+	docker-compose exec --user www app npm install
+	docker-compose exec --user www app npm run dev
 
 # =================================
 # Testy
