@@ -28,7 +28,12 @@ WORKDIR /var/www
 # Create www user if not exists and modify PHP-FPM config
 RUN groupadd -g 1000 www || true \
     && useradd -u 1000 -g www -s /bin/sh www || true \
-    && sed -i 's/www-data/www/g' /usr/local/etc/php-fpm.d/www.conf
+    && mkdir -p /home/www \
+    && chown -R www:www /home/www
+
+
+# Copy custom PHP-FPM configuration
+COPY ./docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Copy composer files first for better caching
 COPY --chown=www:www ./src/composer.json ./
@@ -48,6 +53,9 @@ RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
 COPY --chown=www:www ./src .
 COPY --chown=www:www . /var/www
 
+COPY --chown=www:www ./docker/php/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Ensure critical directories exist and have proper permissions
 RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
     && mkdir -p storage/logs \
@@ -56,12 +64,16 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
     && chmod -R 775 storage \
     && chmod -R 775 bootstrap/cache
 
+USER www
+
 # Install Node.js dependencies
 RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "PROD" ]; then \
         npm ci --only=production; \
     else \
         npm install; \
     fi
+
+USER root
 
 # Run composer scripts now that we have the full application
 RUN composer dump-autoload --optimize
@@ -72,4 +84,5 @@ RUN chown -R www:www /var/www && chmod -R 775 storage bootstrap/cache
 USER www
 
 EXPOSE 9000
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]

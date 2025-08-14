@@ -143,6 +143,7 @@ install:
 	make npm-install
 	make key-generate
 	make migrate
+	@echo "Projekt gotowy! Aplikacja dostępna pod: http://localhost:8000"
 
 # =================================
 # Zarządzanie kontenerami
