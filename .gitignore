@@ -45,3 +45,17 @@ docker/mysql/data/
 # Logs
 # =================================
 *.log
+
+# Vite & Laravel Mix
+src/public/build/
+src/public/hot
+src/public/storage
+src/public/mix-manifest.json
+
+# Node modules
+src/node_modules/
+node_modules/
+
+# Build artifacts
+src/public/css/
+src/public/js/
