@@ -13,5 +13,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+/** @TODO fix route */
+// Backup route jeśli atrybuty nie działają
+Route::get('/', [\App\Http\Controllers\Portfolio\HomeController::class, 'index'])->name('home');
+
 
 require __DIR__.'/auth.php';

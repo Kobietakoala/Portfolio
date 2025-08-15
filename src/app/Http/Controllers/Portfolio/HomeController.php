@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Portfolio;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Routing\Attribute\Route;
 
 class HomeController extends Controller
 {
