@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Routing\Attribute\Route;
 
 #[Route(prefix: 'web/v1', name: 'web.')]
 #[Middleware('web')]
