@@ -228,6 +228,9 @@ migrate:
 migrate-fresh:
 	docker-compose exec app php artisan migrate:fresh --seed
 
+migrate-fresh-no-seed:
+	docker-compose exec app php artisan migrate:fresh
+
 migrate-rollback:
 	docker-compose exec app php artisan migrate:rollback
 
