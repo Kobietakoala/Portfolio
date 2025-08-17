@@ -1,8 +1,6 @@
-``` 
-*Gotowe!** Aplikacja działa z pełną funkcjonalnością Breeze (rejestracja, logowanie, dashboard).
+# PortfolioApp
 
 ## 📁 Struktura projektu
-```
 project/ \
 ├── app/ # aplikacja laravel\
 ├── docker/ │ \
@@ -44,6 +42,9 @@ project/ \
 - **Storage**: AWS S3
 - **SSL**: Wymuszony HTTPS
 - **Monitoring**: Sentry, New Relic
+
+## 📋 **[Schemat bazy danych](docs/database-schema.md)**
+[🔍 Zobacz szczegółowy schemat bazy danych](docs/database-schema.md)
 
 ## 🛠 Instalacja
 
