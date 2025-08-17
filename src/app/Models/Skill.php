@@ -74,13 +74,12 @@ class Skill extends Model
     // Accessors
     public function getLevelNameAttribute(): ?string
     {
-        return match($this->level) {
-            0 => 'Beginner',
-            1 => 'Intermediate',
-            2 => 'Advanced',
-            3 => 'Expert',
-            default => null,
-        };
+        return $this->level !== null ? __('enums.skill_level.' . $this->level) : null;
+    }
+
+    public function getLevelEnumAttribute(): ?SkillLevelEnum
+    {
+        return $this->level !== null ? SkillLevelEnum::from($this->level) : null;
     }
 
     // Route model binding

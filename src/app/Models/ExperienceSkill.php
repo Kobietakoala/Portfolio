@@ -56,13 +56,12 @@ class ExperienceSkill extends Model
     // Accessors
     public function getFocusLevelAttribute(): string
     {
-        /** @TODO translations */
         return match(true) {
-            $this->focus_percent >= 80 => 'Bardzo wysoki',
-            $this->focus_percent >= 60 => 'Wysoki',
-            $this->focus_percent >= 40 => 'Średni',
-            $this->focus_percent >= 20 => 'Niski',
-            default => 'Bardzo niski',
+            $this->focus_percent >= 80 => __('enums.focus_level.very_high'),
+            $this->focus_percent >= 60 => __('enums.focus_level.high'),
+            $this->focus_percent >= 40 => __('enums.focus_level.medium'),
+            $this->focus_percent >= 20 => __('enums.focus_level.low'),
+            default => __('enums.focus_level.very_low'),
         };
     }
 }

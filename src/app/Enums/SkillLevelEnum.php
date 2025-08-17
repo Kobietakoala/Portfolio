@@ -13,12 +13,7 @@ enum SkillLevelEnum: int
 
     public function label(): string
     {
-        return match($this) {
-            self::BEGINNER => 'Początkujący',
-            self::INTERMEDIATE => 'Średniozaawansowany',
-            self::ADVANCED => 'Zaawansowany',
-            self::EXPERT => 'Ekspert',
-        };
+        return __('enums.skill_level.' . $this->value);
     }
 
     public static function options(): array

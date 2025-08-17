@@ -83,15 +83,21 @@ class Experience extends Model
         $years = $diff->y;
         $months = $diff->m;
 
-        /** @TODO translations */
         if ($years > 0 && $months > 0) {
-            return $years . ' lat, ' . $months . ' miesięcy';
+            return __('models.experience.duration.years_months', [
+                'years' => $this->formatYears($years),
+                'months' => $this->formatMonths($months)
+            ]);
         } elseif ($years > 0) {
-            return $years . ' lat';
+            return __('models.experience.duration.years_only', [
+                'years' => $this->formatYears($years)
+            ]);
         } elseif ($months > 0) {
-            return $months . ' miesięcy';
+            return __('models.experience.duration.months_only', [
+                'months' => $this->formatMonths($months)
+            ]);
         } else {
-            return 'Mniej niż miesiąc';
+            return __('models.experience.duration.less_than_month');
         }
     }
 
@@ -101,5 +107,38 @@ class Experience extends Model
         $end = $this->until ?? now();
 
         return $start->diffInMonths($end);
+    }
+
+    // Helper methods
+    private function formatYears(int $years): string
+    {
+        if (app()->getLocale() === 'pl') {
+            return $years . ' ' . match(true) {
+                $years === 1 => __('models.experience.duration.year'),
+                $years >= 2 && $years <= 4 => __('models.experience.duration.years_2_4'),
+                default => __('models.experience.duration.years_5_plus'),
+            };
+        }
+
+        return $years . ' ' . ($years === 1 ?
+            __('models.experience.duration.year') :
+            __('models.experience.duration.years')
+        );
+    }
+
+    private function formatMonths(int $months): string
+    {
+        if (app()->getLocale() === 'pl') {
+            return $months . ' ' . match(true) {
+                $months === 1 => __('models.experience.duration.month'),
+                $months >= 2 && $months <= 4 => __('models.experience.duration.months_2_4'),
+                default => __('models.experience.duration.months_5_plus'),
+            };
+        }
+
+        return $months . ' ' . ($months === 1 ?
+            __('models.experience.duration.month') :
+            __('models.experience.duration.months')
+        );
     }
 }
