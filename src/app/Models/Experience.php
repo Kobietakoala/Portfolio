@@ -83,23 +83,21 @@ class Experience extends Model
         $years = $diff->y;
         $months = $diff->m;
 
-        if ($years > 0 && $months > 0) {
-            return __('models.experience.duration.years_months', [
+        return match (true) {
+            $years > 0 && $months > 0 => __('models.experience.duration.years_months', [
                 'years' => $this->formatYears($years),
                 'months' => $this->formatMonths($months)
-            ]);
-        } elseif ($years > 0) {
-            return __('models.experience.duration.years_only', replace: [
+            ]),
+            $years > 0 => __('models.experience.duration.years_only', [
                 'years' => $this->formatYears($years)
-            ]);
-        } elseif ($months > 0) {
-            return __('models.experience.duration.months_only', [
+            ]),
+            $months > 0 => __('models.experience.duration.months_only', [
                 'months' => $this->formatMonths($months)
-            ]);
-        } else {
-            return __('models.experience.duration.less_than_month');
-        }
+            ]),
+            default => __('models.experience.duration.less_than_month'),
+        };
     }
+
 
     public function getDurationInMonthsAttribute(): int
     {
