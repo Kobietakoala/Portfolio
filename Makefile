@@ -237,6 +237,15 @@ migrate-rollback:
 seed:
 	docker-compose exec app php artisan db:seed
 
+ARGS := $(filter-out $@,$(MAKECMDGOALS))
+name ?= $(word 1,$(ARGS))
+%:
+	@:
+
+model:
+	@if not defined name (echo Error: Model name expected. Use: make model name=Modelname && exit 1)
+	docker-compose exec app php artisan make:model $(name)
+
 # Cache
 cache-clear:
 	@echo "🗑️  Czyszczenie cache Laravel..."
