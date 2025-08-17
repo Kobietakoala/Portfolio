@@ -238,13 +238,17 @@ seed:
 	docker-compose exec app php artisan db:seed
 
 ARGS := $(filter-out $@,$(MAKECMDGOALS))
-name ?= $(word 1,$(ARGS))
+n ?= $(word 1,$(ARGS))
 %:
 	@:
 
 model:
-	@if not defined name (echo Error: Model name expected. Use: make model name=Modelname && exit 1)
-	docker-compose exec app php artisan make:model $(name)
+	@if not defined n (echo Error: Model name expected. Use: make model n=ModelName && exit 1)
+	docker-compose exec app php artisan make:model $(n)
+
+factory:
+	@if not defined n (echo Error: Factory name expected. Use: make factory n=FactoryName && exit 1)
+	docker-compose exec app php artisan make:factory $(n)
 
 # Cache
 cache-clear:
