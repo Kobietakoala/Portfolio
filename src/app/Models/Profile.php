@@ -89,7 +89,7 @@ class Profile extends Model
         $lastname = $this->lastname ?? '';
 
         return strtoupper(
-            substr($firstname, 0, 1) . substr($lastname, 0, 1)
+            $firstname[0] . $lastname[0]
         );
     }
 }
