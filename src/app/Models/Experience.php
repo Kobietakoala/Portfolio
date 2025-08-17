@@ -89,7 +89,7 @@ class Experience extends Model
                 'months' => $this->formatMonths($months)
             ]);
         } elseif ($years > 0) {
-            return __('models.experience.duration.years_only', [
+            return __('models.experience.duration.years_only', replace: [
                 'years' => $this->formatYears($years)
             ]);
         } elseif ($months > 0) {
