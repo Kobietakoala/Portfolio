@@ -58,6 +58,8 @@ class ProfileService
             'skills' => $this->skillService->getCategoriesWithSkills(),
             'experience' => $profile->getExperience(),
             'resume' => $profile->getResume(),
+            'mail' => $profile->getAttribute('mail'),
+            'github' => $profile->getAttribute('github'),
         ];
     }
 
