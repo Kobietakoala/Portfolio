@@ -56,4 +56,23 @@ class SkillCategory extends Model
     {
         return $this->hasMany(Skill::class, 'category');
     }
+
+    public function getSkills(): array
+    {
+        return $this->skills->map(function($skill) {
+            if (is_array($skill->name)) {
+                return $skill->getTranslation('name', app()->getLocale());
+            }
+            return $skill->name;
+        })->values()->toArray();
+    }
+
+    public function getNameAttribute($value): string
+    {
+        if (is_array($value)) {
+            return $this->getTranslation('name', app()->getLocale()) ?: '';
+        }
+        return $value ?: '';
+    }
+
 }
