@@ -52,10 +52,12 @@ class ProfileService
             'cache_source' => 'database_fetch',
             'full_name' => $profile->getFullName(),
             'avatar' => $profile->getAvatar(),
-            'position' => $profile->position,
-            'about' => $profile->about,
+            'position' => $profile->getAttribute('position'),
+            'about' => $profile->getAttribute('about'),
+            'contact_description' => $profile->getAttribute('contact_description'),
             'skills' => $this->skillService->getCategoriesWithSkills(),
             'experience' => $profile->getExperience(),
+            'resume' => $profile->getResume(),
         ];
     }
 
