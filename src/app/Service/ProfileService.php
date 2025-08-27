@@ -10,6 +10,10 @@ class ProfileService
     private const string CACHE_KEY_PROFILE = 'profile_data';
     private const int CACHE_TTL = 3600;
 
+    public function __construct(
+        private SkillService $skillService,
+    ) { }
+
     public function getCachedProfileData(): ?array
     {
         return Cache::remember(self::CACHE_KEY_PROFILE, self::CACHE_TTL, function () {
@@ -48,6 +52,7 @@ class ProfileService
             'avatar' => $profile->getAvatar(),
             'position' => $profile->position,
             'about' => $profile->about,
+            'skills' => $this->skillService->getCategoriesWithSkills(),
         ];
     }
 
