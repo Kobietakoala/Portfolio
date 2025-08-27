@@ -73,6 +73,40 @@
                             @endforeach
                         @endforeach
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-end">
+                                @if(isset($profileData['resume']['url']) && $profileData['resume']['url'])
+                                    <a href="{{ $profileData['resume']['url'] }}"
+                                       class="btn btn-success"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       @if(isset($profileData['resume']['filename']) && $profileData['resume']['filename'])
+                                           download="{{ $profileData['resume']['filename'] }}"
+                                       @else
+                                           download
+                                       @endif
+                                    >
+                                        <i class="fas fa-file-download me-2"></i>
+                                        Pobierz CV
+                                        @if(isset($profileData['resume']['filename']) && $profileData['resume']['filename'])
+                                            <span class="text-muted small">({{ $profileData['resume']['filename'] }})</span>
+                                        @endif
+                                    </a>
+                                @else
+                                    <a href="{{ asset('favicon.ico') }}"
+                                       class="btn btn-outline-secondary"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       download="favicon.ico"
+                                    >
+                                        <i class="fas fa-file-download me-2"></i>
+                                        Pobierz favicon.ico
+                                    </a>
+                                @endif
+                            </td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
 
