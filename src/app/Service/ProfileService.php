@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class ProfileService
@@ -9,11 +10,20 @@ class ProfileService
     private const string CACHE_KEY_PROFILE = 'profile_data';
     private const int CACHE_TTL = 3600;
 
-    public function getProfileData(): ?array
+    public function getCachedProfileData(): ?array
     {
         return Cache::remember(self::CACHE_KEY_PROFILE, self::CACHE_TTL, function () {
             return $this->fetchProfileData();
         });
+    }
+
+    /**
+     * @TODO remove
+     * @return array|null
+     */
+    public function getProfileData(): ?array
+    {
+        return $this->fetchProfileData();
     }
 
     public static function clearProfileCache(): void
@@ -36,6 +46,7 @@ class ProfileService
             'cache_source' => 'database_fetch',
             'full_name' => $profile->getFullName(),
             'avatar' => $profile->getAvatar(),
+            'position' => $profile->position,
             'about' => $profile->about,
         ];
     }
