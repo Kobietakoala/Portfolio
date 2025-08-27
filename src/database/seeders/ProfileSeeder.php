@@ -18,8 +18,6 @@ class ProfileSeeder extends Seeder
                 ->create([
                     'user_id' => $user->id,
                 ]);
-
-            Profile::factory(3)->create();
         }
     }
 }
