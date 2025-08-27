@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Skill;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\UniqueConstraintViolationException;
 
@@ -20,9 +21,17 @@ class SkillsSeeder extends Seeder
             try {
                 Skill::factory()->create();
                 $created++;
-            } catch (UniqueConstraintViolationException $e) {
+            } catch (QueryException $e) {
+                // Przechwycenie naruszenia unikatowości (SQLSTATE 23000)
+                $isUniqueViolation = ($e->getCode() === '23000')
+                    || (($e->errorInfo[0] ?? null) === '23000');
+
+                if (!$isUniqueViolation) {
+                    throw $e;
+                }
                 continue;
             }
         }
+
     }
 }
