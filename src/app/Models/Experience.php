@@ -73,31 +73,6 @@ class Experience extends Model
     }
 
     // Accessors
-    public function getDurationAttribute(): string
-    {
-        $start = $this->since;
-        $end = $this->until ?? now();
-
-        $diff = $start->diff($end);
-
-        $years = $diff->y;
-        $months = $diff->m;
-
-        return match (true) {
-            $years > 0 && $months > 0 => __('models.experience.duration.years_months', replace: [
-                'years' => $this->formatYears($years),
-                'months' => $this->formatMonths($months)
-            ]),
-            $years > 0 => __('models.experience.duration.years_only', replace: [
-                'years' => $this->formatYears($years)
-            ]),
-            $months > 0 => __('models.experience.duration.months_only', replace: [
-                'months' => $this->formatMonths($months)
-            ]),
-            default => __('models.experience.duration.less_than_month'),
-        };
-    }
-
 
     public function getDurationInMonthsAttribute(): int
     {
@@ -107,36 +82,31 @@ class Experience extends Model
         return $start->diffInMonths($end);
     }
 
-    // Helper methods
-    private function formatYears(int $years): string
+    public function getPosition(): string
     {
-        if (app()->getLocale() === 'pl') {
-            return $years . ' ' . match(true) {
-                $years === 1 => __('models.experience.duration.year'),
-                $years >= 2 && $years <= 4 => __('models.experience.duration.years_2_4'),
-                default => __('models.experience.duration.years_5_plus'),
-            };
-        }
-
-        return $years . ' ' . ($years === 1 ?
-            __('models.experience.duration.year') :
-            __('models.experience.duration.years')
-        );
+        return $this->getTranslation('position', app()->getLocale());
     }
 
-    private function formatMonths(int $months): string
+    public function getDescription(): string
     {
-        if (app()->getLocale() === 'pl') {
-            return $months . ' ' . match(true) {
-                $months === 1 => __('models.experience.duration.month'),
-                $months >= 2 && $months <= 4 => __('models.experience.duration.months_2_4'),
-                default => __('models.experience.duration.months_5_plus'),
-            };
-        }
+        return $this->getTranslation('description', app()->getLocale());
+    }
 
-        return $months . ' ' . ($months === 1 ?
-            __('models.experience.duration.month') :
-            __('models.experience.duration.months')
-        );
+    public function getDateRange(): string
+    {
+        $startDate = $this->since->format('m/Y');
+        $endDate = $this->until
+            ? $this->until->format('m/Y')
+            : __('enums.experience.present');
+        return $startDate . ' - ' . $endDate;
+    }
+
+    public function getSkills(): array
+    {
+         return $this->skills->map(function($skill) {
+            return is_array($skill->name)
+                ? $skill->getTranslation('name', app()->getLocale())
+                : $skill->name;
+        })->toArray();
     }
 }
