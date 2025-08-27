@@ -50,6 +50,8 @@ class Company extends Model
             return null;
         }
 
-        return str_starts_with($this->url, 'http') ? $this->url : 'https://' . $this->url;
+        $trimmedUrl = trim($this->url);
+
+        return str_starts_with($trimmedUrl, 'http') ? $trimmedUrl : 'https://' . $trimmedUrl;
     }
 }

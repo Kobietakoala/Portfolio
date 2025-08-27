@@ -91,12 +91,22 @@ class File extends Model
     public function getFileSizeHumanAttribute(): string
     {
         $bytes = $this->size;
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
-        for ($i = 0; $bytes > 1024; $i++) {
-            $bytes /= 1024;
+        if ($bytes < 0) {
+            return '0 B';
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        $maxIndex = count($units) - 1;
+
+        $i = 0;
+        while ($bytes >= 1024 && $i < $maxIndex) {
+            $bytes /= 1024;
+            $i++;
+        }
+
+        $decimals = $i === 0 ? 0 : 2;
+
+        return number_format($bytes, $decimals, '.', '') . ' ' . $units[$i];
     }
 }

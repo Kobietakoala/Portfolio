@@ -88,8 +88,8 @@ class Profile extends Model
         $firstname = $this->firstname ?? '';
         $lastname = $this->lastname ?? '';
 
-        return strtoupper(
-            $firstname[0] . $lastname[0]
+        return ucwords(
+            $firstname[0] . ' ' . $lastname[0]
         );
     }
 }
