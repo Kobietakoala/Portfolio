@@ -5,26 +5,20 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Migration: Add foreign keys in files to profiles
+ * Migration: Add foreign key constraints to files table
  *
- * Adds audit foreign key constraints to files table:
- * - Links created_by and updated_by to profiles
- * - Enables audit trail functionality
- * - Uses nullOnDelete to preserve file records when profile is deleted
- *
- * Relations:
- * - files.created_by -> profiles.id
- * - files.updated_by -> profiles.id
+ * Adds foreign key relationships for files table:
+ * - Links created_by and updated_by with users table
  */
 return new class extends Migration
 {
-    protected string $description = 'Adds audit foreign key constraints from files to profiles table';
+    protected string $description = 'Adds foreign key constraints to files table for user relationships';
 
     public function up(): void
     {
         Schema::table('files', static function (Blueprint $table) {
-            $table->foreign('created_by')->references('id')->on('profiles')->nullOnDelete();
-            $table->foreign('updated_by')->references('id')->on('profiles')->nullOnDelete();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 
@@ -35,5 +29,4 @@ return new class extends Migration
             $table->dropForeign(['updated_by']);
         });
     }
-
 };
