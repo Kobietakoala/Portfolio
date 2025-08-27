@@ -6,34 +6,17 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
-/**
- * Model: Profile
- *
- * Manages user profile information with multilingual support:
- * - Stores personal and professional information
- * - Supports multiple languages via JSON fields
- * - Links to avatar files
- * - Contains contact information and social links
- *
- * Relations:
- * - belongsTo File (avatar)
- * - hasMany Experience
- * - hasMany File (created files)
- * - hasMany File (updated files)
- */
 class Profile extends Model
 {
     use HasFactory, HasUuids, HasTranslations;
-
-    protected $table = 'profiles';
 
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [
+        'user_id',
         'firstname',
         'lastname',
         'position',
@@ -45,51 +28,24 @@ class Profile extends Model
     ];
 
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'position' => 'array',
+        'about' => 'array',
+        'contact_description' => 'array',
     ];
 
-    // Translatable fields
     public array $translatable = [
         'position',
         'about',
         'contact_description',
     ];
 
-    // Relations
-    public function avatar(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(File::class, 'avatar');
+        return $this->belongsTo(User::class);
     }
 
-    public function experiences(): HasMany
+    public function avatarFile(): BelongsTo
     {
-        return $this->hasMany(Experience::class, 'profile_id');
-    }
-
-    public function createdFiles(): HasMany
-    {
-        return $this->hasMany(File::class, 'created_by');
-    }
-
-    public function updatedFiles(): HasMany
-    {
-        return $this->hasMany(File::class, 'updated_by');
-    }
-
-    // Accessors
-    public function getFullNameAttribute(): string
-    {
-        return trim($this->firstname . ' ' . $this->lastname);
-    }
-
-    public function getInitialsAttribute(): string
-    {
-        $firstname = $this->firstname ?? '';
-        $lastname = $this->lastname ?? '';
-
-        return ucwords(
-            $firstname[0] . ' ' . $lastname[0]
-        );
+        return $this->belongsTo(File::class, 'avatar', 'id');
     }
 }

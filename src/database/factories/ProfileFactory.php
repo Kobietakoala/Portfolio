@@ -1,91 +1,58 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Database\Factories;
 
-use App\Models\File;
 use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends Factory<Profile>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Profile>
  */
 class ProfileFactory extends Factory
 {
     protected $model = Profile::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        $positions = [
-            'pl' => [
-                'Senior PHP Developer',
-                'Full Stack Developer',
-                'Backend Developer',
-                'Software Engineer',
-                'Technical Lead',
-                'DevOps Engineer',
-            ],
-            'en' => [
-                'Senior PHP Developer',
-                'Full Stack Developer',
-                'Backend Developer',
-                'Software Engineer',
-                'Technical Lead',
-                'DevOps Engineer',
-            ]
-        ];
-
         return [
             'id' => Str::uuid(),
-            'firstname' => $this->faker->firstName(),
-            'lastname' => $this->faker->lastName(),
+            'user_id' => User::factory(), // Automatycznie tworzy użytkownika
+            'firstname' => fake()->firstName(),
+            'lastname' => fake()->lastName(),
             'position' => [
-                'pl' => $this->faker->randomElement($positions['pl']),
-                'en' => $this->faker->randomElement($positions['en']),
+                'pl' => fake()->randomElement([
+                    'Software Engineer', 'DevOps Engineer', 'Full Stack Developer',
+                    'Frontend Developer', 'Backend Developer', 'UI/UX Designer'
+                ]),
+                'en' => fake()->randomElement([
+                    'Software Engineer', 'DevOps Engineer', 'Full Stack Developer',
+                    'Frontend Developer', 'Backend Developer', 'UI/UX Designer'
+                ])
             ],
             'about' => [
-                'pl' => $this->faker->paragraphs(3, true),
-                'en' => $this->faker->paragraphs(3, true),
+                'pl' => fake('pl_PL')->paragraphs(3, true),
+                'en' => fake()->paragraphs(3, true)
             ],
             'contact_description' => [
                 'pl' => 'Skontaktuj się ze mną, aby omówić współpracę.',
-                'en' => 'Contact me to discuss collaboration opportunities.',
+                'en' => 'Contact me to discuss collaboration opportunities.'
             ],
-            'mail' => $this->faker->unique()->safeEmail(),
-            'avatar' => null,
-            'github' => 'https://github.com/' . $this->faker->userName(),
+            'mail' => fake()->unique()->safeEmail(),
+            'avatar' => null, // Będzie ustawione w seeder jeśli potrzeba
+            'github' => fake()->url(),
         ];
     }
 
     /**
-     * Indicate that the profile should have an avatar.
+     * State for specific user
      */
-    public function withAvatar(): static
-    {
-        return $this->afterCreating(function (Profile $profile) {
-            $avatar = File::factory()->image()->create([
-                'created_by' => $profile->id,
-                'updated_by' => $profile->id,
-            ]);
-
-            $profile->update(['avatar' => $avatar->id]);
-        });
-    }
-
-    /**
-     * Create a profile without social links.
-     */
-    public function withoutSocial(): static
+    public function forUser(User $user): static
     {
         return $this->state(fn (array $attributes) => [
-            'github' => null,
+            'user_id' => $user->id,
+            'mail' => $user->email, // Używamy email użytkownika
         ]);
     }
 }
