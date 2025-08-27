@@ -70,9 +70,14 @@ class SkillCategory extends Model
     public function getNameAttribute($value): string
     {
         if (is_array($value)) {
-            return $this->getTranslation('name', app()->getLocale()) ?: '';
+            $translation = $this->getTranslation('name', app()->getLocale());
+            if (!empty($translation)) {
+                return $translation;
+            }
+
+            return !empty($value['en']) ? $value['en'] : 'N/A';
         }
-        return $value ?: '';
+        return !empty($value) ? $value : 'N/A';
     }
 
 }
