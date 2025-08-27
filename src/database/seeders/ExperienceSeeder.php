@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Experience;
-use App\Models\User;
+use App\Models\Profile;
 use App\Models\Company;
 use Illuminate\Database\Seeder;
 
@@ -11,16 +11,27 @@ class ExperienceSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::all();
+        $profiles = Profile::all();
         $companies = Company::all();
 
-        foreach ($users as $user) {
-            $experiencesCount = rand(2, 5);
+        if ($profiles->isEmpty()) {
+            $this->command->warn('Brak profili w bazie. Uruchom najpierw ProfileSeeder.');
+            return;
+        }
 
-            Experience::factory($experiencesCount)->create([
-                'user_id' => $user->id,
-                'company_id' => $companies->random()->id,
-            ]);
+        if ($companies->isEmpty()) {
+            $this->command->warn('Brak firm w bazie. Uruchom najpierw CompanySeeder.');
+            return;
+        }
+
+        foreach ($profiles as $profile) {
+            $experiencesCount = rand(1, 3);
+            for ($i = 0; $i < $experiencesCount; $i++) {
+                Experience::factory()->create([
+                    'profile_id' => $profile->id,
+                    'company_id' => $companies->random()->id,
+                ]);
+            }
         }
     }
 }

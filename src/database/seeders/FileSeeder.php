@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\File;
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 
 class FileSeeder extends Seeder
@@ -12,14 +13,34 @@ class FileSeeder extends Seeder
     {
         $users = User::all();
 
+        if ($users->isEmpty()) {
+            $this->command->warn('Brak użytkowników w bazie. Uruchom najpierw UserSeeder.');
+            return;
+        }
+
         foreach ($users as $user) {
-            File::factory(rand(5, 15))
-                ->state(['created_by' => $user->id])
+            File::factory(rand(3, 8))
+                ->forUser($user)
+                ->active()
                 ->create();
 
-            File::factory(rand(2, 5))
+            $avatarFiles = File::factory(rand(1, 3))
                 ->image()
-                ->state(['created_by' => $user->id])
+                ->forUser($user)
+                ->active()
+                ->create();
+
+            $profile = Profile::where('user_id', $user->id)->first();
+            if ($profile && $avatarFiles->isNotEmpty()) {
+                $profile->update([
+                    'avatar' => $avatarFiles->first()->id
+                ]);
+            }
+
+            // Niektóre zarchiwizowane pliki
+            File::factory(rand(0, 2))
+                ->forUser($user)
+                ->archived()
                 ->create();
         }
     }

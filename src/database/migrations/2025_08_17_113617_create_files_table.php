@@ -33,8 +33,8 @@ return new class extends Migration
             $table->string('source', 50)->nullable();
             $table->unsignedTinyInteger('status')->default(\App\Enums\FileStatusEnum::ACTIVE)->comment('\App\Enums\FileStatusEnum::class values: 0,1,9');
             $table->json('metadata')->nullable();
-            $table->char('created_by', 36)->nullable();
-            $table->char('updated_by', 36)->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->dateTimeTz('created_at', 3)->useCurrent();
             $table->dateTimeTz('updated_at', 3)->useCurrentOnUpdate()->useCurrent();
 
