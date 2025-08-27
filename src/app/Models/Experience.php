@@ -84,7 +84,7 @@ class Experience extends Model
         $months = $diff->m;
 
         return match (true) {
-            $years > 0 && $months > 0 => __('models.experience.duration.years_months', replace:[
+            $years > 0 && $months > 0 => __('models.experience.duration.years_months', replace: [
                 'years' => $this->formatYears($years),
                 'months' => $this->formatMonths($months)
             ]),
