@@ -120,25 +120,26 @@ class Profile extends Model
 
         /** @var Experience $experience */
         foreach ($experiences as $experience) {
-            $companyName = $experience->company->name ?? 'Nieznana firma';
+            $company = $experience->company;
+            $companyId = $company?->getKey() ?? 'unknown';
+            $companyName = $company->name ?? 'Unknown company';
+            $companyUrl = $company?->formatted_url ?? null;
 
-            if (isset($result[$companyName])) {
-                $result[$companyName][] = [
-                    'position' => $experience->getPosition(),
-                    'link' => $experience->company->website ?? null,
-                    'date' => $experience->getDateRange(),
-                    'description' => $experience->getDescription(),
-                    'skills' => $experience->getSkills(),
+            if (!isset($result[$companyId])) {
+                $result[$companyId] = [
+                    'company_name' => $companyName,
+                    'company_url' => $companyUrl,
+                    'experiences' => [],
                 ];
-            } else {
-                $result[$companyName] = [[
-                    'position' =>$experience->getPosition(),
-                    'link' => $experience->company->website ?? null,
-                    'date' => $experience->getDateRange(),
-                    'description' => $experience->getDescription(),
-                    'skills' => $experience->getSkills(),
-                ]];
             }
+
+            $result[$companyId]['experiences'][] = [
+                'position' => $experience->getPosition(),
+                'link' => $companyUrl,
+                'date' => $experience->getDateRange(),
+                'description' => $experience->getDescription(),
+                'skills' => $experience->getSkills(),
+            ];
         }
 
         return $result;
