@@ -1,4 +1,4 @@
-<div class="container">
+<div id="home" class="container">
     <div class="profile-header text-center">
         @if($profileData['avatar'])
             <div class="avatar-container mb-3">
