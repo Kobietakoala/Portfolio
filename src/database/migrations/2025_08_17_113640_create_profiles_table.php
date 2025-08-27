@@ -24,6 +24,7 @@ return new class extends Migration
     {
         Schema::create('profiles', static function (Blueprint $table) {
             $table->char('id', 36)->primary();
+            $table->unsignedBigInteger('user_id')->nullable();
 
             $table->string('firstname', 128)->nullable();
             $table->string('lastname', 128)->nullable();
@@ -43,6 +44,7 @@ return new class extends Migration
 
         Schema::table('profiles', static function (Blueprint $table) {
             $table->foreign('avatar')->references('id')->on('files')->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 
@@ -50,6 +52,7 @@ return new class extends Migration
     {
         Schema::table('profiles', static function (Blueprint $table) {
             $table->dropForeign(['avatar']);
+            $table->dropForeign(['user_id']);
         });
         Schema::dropIfExists('profiles');
     }
