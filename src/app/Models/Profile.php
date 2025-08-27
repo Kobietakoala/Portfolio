@@ -90,6 +90,51 @@ class Profile extends Model
         ];
     }
 
+    public function getExperience(): array
+    {
+        $experiences = $this->experiences()
+            ->with([
+                'company',
+                'skills' => function($query) {
+                    $query->orderBy('name->pl');
+                }
+            ])
+            ->orderBy('since', 'desc')
+            ->get();
+
+        if ($experiences->isEmpty()) {
+            return [];
+        }
+
+        $result = [];
+
+        /** @var Experience $experience */
+        foreach ($experiences as $experience) {
+            $companyName = $experience->company->name ?? 'Nieznana firma';
+
+            if (isset($result[$companyName])) {
+                $result[$companyName][] = [
+                    'position' => $experience->getPosition(),
+                    'link' => $experience->company->website ?? null,
+                    'date' => $experience->getDateRange(),
+                    'description' => $experience->getDescription(),
+                    'skills' => $experience->getSkills(),
+                ];
+            } else {
+                $result[$companyName] = [[
+                    'position' =>$experience->getPosition(),
+                    'link' => $experience->company->website ?? null,
+                    'date' => $experience->getDateRange(),
+                    'description' => $experience->getDescription(),
+                    'skills' => $experience->getSkills(),
+                ]];
+            }
+        }
+
+        return $result;
+    }
+
+
     /**
      * Boot model events
      */
@@ -109,6 +154,4 @@ class Profile extends Model
             ProfileService::clearProfileCache();
         });
     }
-
-
 }
