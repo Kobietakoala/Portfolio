@@ -82,14 +82,14 @@ class File extends Model
         static::updated(static function ($file) {
             $profilesUsingThisAsAvatar = Profile::where('avatar', $file->id)->exists();
             if ($profilesUsingThisAsAvatar) {
-                Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+                ProfileService::clearProfileCache();
             }
         });
 
         static::deleted(static function ($file) {
             $profilesUsingThisAsAvatar = Profile::where('avatar', $file->id)->exists();
             if ($profilesUsingThisAsAvatar) {
-                Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+                ProfileService::clearProfileCache();
             }
         });
     }

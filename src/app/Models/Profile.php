@@ -92,15 +92,15 @@ class Profile extends Model
         parent::boot();
 
         static::updated(static function () {
-            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+            ProfileService::clearProfileCache();
         });
 
         static::created(static function () {
-            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+            ProfileService::clearProfileCache();
         });
 
         static::deleted(static function () {
-            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+            ProfileService::clearProfileCache();
         });
     }
 
