@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
@@ -43,6 +44,7 @@ class ProfileService
             return null;
         }
 
+        /** @var Profile $profile */
         $profile = $user->profile;
 
         return [
@@ -53,6 +55,7 @@ class ProfileService
             'position' => $profile->position,
             'about' => $profile->about,
             'skills' => $this->skillService->getCategoriesWithSkills(),
+            'experience' => $profile->getExperience(),
         ];
     }
 
