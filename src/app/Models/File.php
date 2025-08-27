@@ -7,29 +7,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * Model: File
- *
- * Manages file metadata and storage information:
- * - Stores file information without actual file content
- * - Tracks file integrity via checksum
- * - Includes audit trail (created_by, updated_by)
- * - Supports various file statuses and sources
- *
- * Relations:
- * - belongsTo Profile (created_by)
- * - belongsTo Profile (updated_by)
- * - hasMany Profile (avatar)
- * - hasMany SkillCategory (logo)
- * - hasMany Skill (logo)
- */
 class File extends Model
 {
     use HasFactory, HasUuids;
-
-    protected $table = 'files';
 
     protected $keyType = 'string';
     public $incrementing = false;
@@ -49,64 +30,44 @@ class File extends Model
     ];
 
     protected $casts = [
-        'size' => 'integer',
-        'status' => 'integer',
+        'status' => 'integer', // WAŻNE: rzutuj jako integer, nie jako enum
         'metadata' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'size' => 'integer',
     ];
 
-    protected $attributes = [
-        'status' => FileStatusEnum::ACTIVE,
-    ];
-
-    // Relations
-    public function createdBy(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(Profile::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function updatedBy(): BelongsTo
+    public function updater(): BelongsTo
     {
-        return $this->belongsTo(Profile::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
-    // Reverse relations
-    public function profilesAsAvatar(): HasMany
+    // Helper methods
+    public function getStatusEnum(): FileStatusEnum
     {
-        return $this->hasMany(Profile::class, 'avatar');
+        return FileStatusEnum::from($this->status);
     }
 
-    public function skillCategoriesAsLogo(): HasMany
+    public function isActive(): bool
     {
-        return $this->hasMany(SkillCategory::class, 'logo');
+        return $this->status === FileStatusEnum::ACTIVE->value;
     }
 
-    public function skillsAsLogo(): HasMany
+    public function isDeleted(): bool
     {
-        return $this->hasMany(Skill::class, 'logo');
+        return $this->status === FileStatusEnum::DELETED->value;
     }
 
-    // Accessors & Mutators
-    public function getFileSizeHumanAttribute(): string
+    public function isArchived(): bool
     {
-        $bytes = $this->size;
+        return $this->status === FileStatusEnum::ARCHIVED->value;
+    }
 
-        if ($bytes < 0) {
-            return '0 B';
-        }
-
-        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        $maxIndex = count($units) - 1;
-
-        $i = 0;
-        while ($bytes >= 1024 && $i < $maxIndex) {
-            $bytes /= 1024;
-            $i++;
-        }
-
-        $decimals = $i === 0 ? 0 : 2;
-
-        return number_format($bytes, $decimals, '.', '') . ' ' . $units[$i];
+    public function getUrlAttribute(): string
+    {
+        return asset('storage/' . $this->storage_key);
     }
 }
