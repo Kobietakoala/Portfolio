@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ProfileService
 {
-    public const string CACHE_KEY_PROFILE = 'profile_data';
+    private const string CACHE_KEY_PROFILE = 'profile_data';
     private const int CACHE_TTL = 3600;
 
     public function getProfileData(): ?array
@@ -16,7 +16,7 @@ class ProfileService
         });
     }
 
-    public function clearProfileCache(): void
+    public static function clearProfileCache(): void
     {
         Cache::forget(self::CACHE_KEY_PROFILE);
     }
@@ -32,10 +32,11 @@ class ProfileService
         $profile = $user->profile;
 
         return [
-            'full_name' => $profile->getFullName(),
-            'avatar' => $profile->getAvatar(),
             'cached_at' => now()->toISOString(),
             'cache_source' => 'database_fetch',
+            'full_name' => $profile->getFullName(),
+            'avatar' => $profile->getAvatar(),
+            'about' => $profile->about,
         ];
     }
 
