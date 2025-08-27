@@ -1,3 +1,5 @@
 <div>
-    About
+    <div class="about">
+        {{ $profileData['about'] }}
+    </div>
 </div>
