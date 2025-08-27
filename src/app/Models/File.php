@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FileStatusEnum;
+use App\Service\ProfileService;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -70,4 +71,27 @@ class File extends Model
     {
         return asset('storage/' . $this->storage_key);
     }
+
+    /**
+     * Boot model events
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::updated(static function ($file) {
+            $profilesUsingThisAsAvatar = Profile::where('avatar', $file->id)->exists();
+            if ($profilesUsingThisAsAvatar) {
+                Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+            }
+        });
+
+        static::deleted(static function ($file) {
+            $profilesUsingThisAsAvatar = Profile::where('avatar', $file->id)->exists();
+            if ($profilesUsingThisAsAvatar) {
+                Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+            }
+        });
+    }
+
 }

@@ -2,12 +2,28 @@
 
 namespace App\Models;
 
+use App\Service\ProfileService;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Translatable\HasTranslations;
 
+/**
+ * Model: Profile
+ *
+ * Manages user profile information with multilingual support:
+ * - Stores personal and professional information
+ * - Supports multiple languages via JSON fields
+ * - Links to avatar files
+ * - Contains contact information and social links
+ *
+ * Relations:
+ * - belongsTo File (avatar)
+ * - hasMany Experience
+ * - hasMany File (created files)
+ * - hasMany File (updated files)
+ */
 class Profile extends Model
 {
     use HasFactory, HasUuids, HasTranslations;
@@ -48,4 +64,45 @@ class Profile extends Model
     {
         return $this->belongsTo(File::class, 'avatar', 'id');
     }
+
+    // Accessors
+    public function getFullName(): string
+    {
+        return ucwords(trim($this->firstname . ' ' . $this->lastname));
+    }
+
+    public function getAvatar(): ?array
+    {
+        if (!$this->avatarFile) {
+            return null;
+        }
+
+        return [
+            'filename' => $this->avatarFile->filename,
+            'url' => $this->avatarFile->getUrlAttribute(),
+            'mime_type' => $this->avatarFile->mime_type,
+        ];
+    }
+
+    /**
+     * Boot model events
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::updated(static function () {
+            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+        });
+
+        static::created(static function () {
+            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+        });
+
+        static::deleted(static function () {
+            Cache::forget(ProfileService::CACHE_KEY_PROFILE);
+        });
+    }
+
+
 }
