@@ -76,7 +76,7 @@ class Profile extends Model
     {
         $locale = app()->getLocale();
 
-        return $this->hasOne(File::class, 'id', 'id')
+        return $this->hasOne(File::class, 'id', 'resume')
             ->where('filename', 'like', 'resume_' . $locale . '%')
             ->ofMany('created_at', 'max');
     }
