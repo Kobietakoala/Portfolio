@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -69,6 +70,15 @@ class Profile extends Model
     public function experiences(): HasMany
     {
         return $this->hasMany(Experience::class, 'profile_id');
+    }
+
+    public function resumeFile(): HasOne
+    {
+        $locale = app()->getLocale();
+
+        return $this->hasOne(File::class, 'id', 'id')
+            ->where('filename', 'like', 'resume_' . $locale . '%')
+            ->ofMany('created_at', 'max');
     }
 
     // Accessors
@@ -134,6 +144,18 @@ class Profile extends Model
         return $result;
     }
 
+    public function getResume(): ?array
+    {
+        if (!$this->resumeFile) {
+            return null;
+        }
+
+        return [
+            'filename' => $this->resumeFile->filename,
+            'url' => $this->resumeFile->getUrlAttribute(),
+            'mime_type' => $this->resumeFile->mime_type,
+        ];
+    }
 
     /**
      * Boot model events
