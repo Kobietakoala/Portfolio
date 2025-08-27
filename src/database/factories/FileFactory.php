@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Enums\FileStatusEnum;
 use App\Models\File;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -46,14 +47,13 @@ class FileFactory extends Factory
                 FileStatusEnum::ACTIVE->value,
                 FileStatusEnum::PENDING->value,
                 FileStatusEnum::ARCHIVED->value,
-                FileStatusEnum::DELETED->value
             ]),
             'metadata' => [
                 'original_name' => $filename,
                 'uploaded_by' => $this->faker->name(),
                 'description' => $this->faker->optional()->sentence(),
             ],
-            'created_by' => null,
+            'created_by' => User::factory(),
             'updated_by' => null,
         ];
     }
@@ -63,23 +63,37 @@ class FileFactory extends Factory
      */
     public function image(): static
     {
-        $extensions = ['png'];
+        $extensions = ['png', 'jpg', 'jpeg', 'gif'];
         $extension = $this->faker->randomElement($extensions);
         $filename = $this->faker->slug . '.' . $extension;
 
         $mimeTypes = [
             'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
         ];
 
         return $this->state(fn (array $attributes) => [
             'filename' => $filename,
             'mime_type' => $mimeTypes[$extension],
             'content_disposition' => 'inline',
+            'storage_key' => 'images/' . date('Y/m/d') . '/' . Str::uuid() . '.' . $extension,
             'metadata' => array_merge($attributes['metadata'] ?? [], [
                 'width' => $this->faker->numberBetween(100, 2000),
                 'height' => $this->faker->numberBetween(100, 2000),
                 'alt_text' => $this->faker->sentence(),
             ]),
+        ]);
+    }
+
+    /**
+     * Indicate that the file is active.
+     */
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => FileStatusEnum::ACTIVE->value,
         ]);
     }
 
@@ -100,6 +114,16 @@ class FileFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => FileStatusEnum::DELETED->value,
+        ]);
+    }
+
+    /**
+     * State for specific user
+     */
+    public function forUser(User $user): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'created_by' => $user->id,
         ]);
     }
 }
