@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -63,6 +64,11 @@ class Profile extends Model
     public function avatarFile(): BelongsTo
     {
         return $this->belongsTo(File::class, 'avatar', 'id');
+    }
+
+    public function experiences(): HasMany
+    {
+        return $this->hasMany(Experience::class, 'profile_id');
     }
 
     // Accessors
