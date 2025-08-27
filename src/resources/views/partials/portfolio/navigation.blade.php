@@ -1,83 +1,89 @@
-<nav x-data="scrollSpy()" x-init="init()" class="container py-3">
+<nav class="container py-3">
     <div class="d-flex align-items-center justify-content-between">
-        <a href="#home"
-           @click.prevent="scrollTo('home')"
-           class="fw-semibold text-decoration-none text-dark">
+        <a href="#"
+           class="fw-semibold text-decoration-none text-dark"
+           data-scroll-to="home">
             {{ $profileData['full_name'] ?? 'Portfolio' }}
         </a>
 
         <ul class="nav gap-2">
             <li class="nav-item">
-                <a href="#home"
-                   @click.prevent="scrollTo('home')"
-                   :class="linkClass('home')">Home</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="home">Home</a>
             </li>
             <li class="nav-item">
-                <a href="#about"
-                   @click.prevent="scrollTo('about')"
-                   :class="linkClass('about')">About</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="about">About</a>
             </li>
             <li class="nav-item">
-                <a href="#skills"
-                   @click.prevent="scrollTo('skills')"
-                   :class="linkClass('skills')">Skills</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="skills">Skills</a>
             </li>
             <li class="nav-item">
-                <a href="#experience"
-                   @click.prevent="scrollTo('experience')"
-                   :class="linkClass('experience')">Experience</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="experience">Experience</a>
             </li>
             <li class="nav-item">
-                <a href="#projects"
-                   @click.prevent="scrollTo('projects')"
-                   :class="linkClass('projects')">Projects</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="projects">Projects</a>
             </li>
             <li class="nav-item">
-                <a href="#contact"
-                   @click.prevent="scrollTo('contact')"
-                   :class="linkClass('contact')">Contact</a>
+                <a href="#"
+                   class="nav-link"
+                   data-scroll-to="contact">Contact</a>
             </li>
         </ul>
     </div>
 
     <style>
-        .nav .nav-link,
-        .nav a { color: #111827; padding: .5rem .75rem; border-radius: .375rem; }
-        .nav a.active { color: #0d6efd; background: rgba(13,110,253,.08); }
-        .nav a:hover { color: #0d6efd; text-decoration: none; }
+        .nav .nav-link { color: #111827; padding: .5rem .75rem; border-radius: .375rem; }
+        .nav .nav-link.is-active { color: #0d6efd; background: rgba(13,110,253,.08); }
+        .nav .nav-link:hover { color: #0d6efd; text-decoration: none; }
     </style>
 
     <script>
-        function scrollSpy() {
-            return {
-                active: 'home',
-                ids: ['home','about','skills','experience','projects','contact'],
-                observer: null,
-                init() {
-                    // IntersectionObserver do wykrywania aktywnej sekcji
-                    const options = { root: null, rootMargin: '0px 0px -60% 0px', threshold: 0.2 };
-                    this.observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) this.active = entry.target.id;
-                        });
-                    }, options);
+        (function() {
+            const links = Array.from(document.querySelectorAll('[data-scroll-to]'));
+            const ids = ['home','about','skills','experience','projects','contact'];
+            const setActive = (id) => {
+                links.forEach(a => {
+                    a.classList.toggle('is-active', a.getAttribute('data-scroll-to') === id);
+                });
+            };
 
-                    this.ids.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) this.observer.observe(el);
-                    });
-                },
-                linkClass(id) {
-                    return this.active === id ? 'nav-link active' : 'nav-link';
-                },
-                scrollTo(id) {
+            // Smooth scroll on click (bez ostrzeżeń @click)
+            links.forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = a.getAttribute('data-scroll-to');
                     const el = document.getElementById(id);
                     if (!el) return;
                     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    this.active = id;
+                    setActive(id);
                     history.replaceState(null, '', `#${id}`);
-                }
-            }
-        }
+                });
+            });
+
+            // Scroll spy via IntersectionObserver
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) setActive(entry.target.id);
+                });
+            }, { root: null, rootMargin: '0px 0px -60% 0px', threshold: 0.2 });
+
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) observer.observe(el);
+            });
+
+            // Ustaw aktywną pozycję z hash, jeśli istnieje
+            const initial = location.hash ? location.hash.replace('#','') : 'home';
+            setActive(initial);
+        })();
     </script>
 </nav>
