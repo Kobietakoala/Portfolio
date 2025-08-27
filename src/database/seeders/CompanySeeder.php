@@ -36,9 +36,16 @@ class CompanySeeder extends Seeder
             try {
                 Company::factory()->create();
                 $created++;
-            } catch (UniqueConstraintViolationException $e) {
+            } catch (QueryException $e) {
+                $isUniqueViolation = ($e->getCode() === '23000')
+                    || (($e->errorInfo[0] ?? null) === '23000');
+
+                if (!$isUniqueViolation) {
+                    throw $e;
+                }
                 continue;
             }
         }
+
     }
 }
