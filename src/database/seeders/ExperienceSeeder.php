@@ -25,7 +25,7 @@ class ExperienceSeeder extends Seeder
         }
 
         foreach ($profiles as $profile) {
-            $experiencesCount = rand(1, 3);
+            $experiencesCount = random_int(1, 3);
             for ($i = 0; $i < $experiencesCount; $i++) {
                 Experience::factory()->create([
                     'profile_id' => $profile->id,
