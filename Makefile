@@ -146,6 +146,47 @@ install:
 	@echo "Projekt gotowy! Aplikacja dostępna pod: http://localhost:8000"
 
 # =================================
+# Database Seeding
+# =================================
+
+# Seed database with fake data
+seed-fake:
+	@echo "🌱 Wypełnianie bazy danymi testowymi..."
+	docker-compose exec app php artisan migrate:fresh --seed
+	@echo "✅ Baza wypełniona danymi testowymi!"
+
+# Seed only without migration
+seed-only:
+	docker-compose exec app php artisan db:seed
+
+# Create fresh database with fake data
+fresh-seed:
+	@echo "🗑️  Czyszczenie bazy i wypełnianie danymi testowymi..."
+	docker-compose exec app php artisan migrate:fresh --seed
+	@echo "✅ Gotowe!"
+
+# Quick seed for development (with specific seeders)
+seed-dev:
+	@echo "🌱 Szybkie seedowanie dla developerów..."
+	docker-compose exec app php artisan db:seed --class=UserSeeder
+	docker-compose exec app php artisan db:seed --class=CompanySeeder
+	docker-compose exec app php artisan db:seed --class=ExperienceSeeder
+	@echo "✅ Dane deweloperskie załadowane!"
+
+# Create seeders
+seeder:
+	docker-compose exec app php artisan make:seeder $(name)
+
+# Tinker for manual testing
+tinker-seed:
+	@echo "Przykładowe komendy do tinker:"
+	@echo "User::factory(10)->create();"
+	@echo "Company::factory(5)->create();"
+	@echo "File::factory()->image()->create();"
+	make tinker
+
+
+# =================================
 # Zarządzanie kontenerami
 # =================================
 
