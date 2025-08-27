@@ -166,12 +166,8 @@ fresh-seed:
 	@echo "✅ Gotowe!"
 
 # Quick seed for development (with specific seeders)
-seed-dev:
-	@echo "🌱 Szybkie seedowanie dla developerów..."
-	docker-compose exec app php artisan db:seed --class=UserSeeder
-	docker-compose exec app php artisan db:seed --class=CompanySeeder
-	docker-compose exec app php artisan db:seed --class=ExperienceSeeder
-	@echo "✅ Dane deweloperskie załadowane!"
+seed-run:
+	docker-compose exec app php artisan db:seed --class=$(name)
 
 # Create seeders
 seeder:
