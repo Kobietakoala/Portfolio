@@ -18,7 +18,9 @@ class ProfileFactory extends Factory
     {
         return [
             'id' => Str::uuid(),
-            'user_id' => User::factory(), // Automatycznie tworzy użytkownika
+            // Uwaga: 'user_id' => User::factory() jest wspierane przez Laravel i tworzy powiązanego użytkownika.
+            // Jeśli chcesz jawnie kontrolować właściciela w testach/seedach, użyj stanu ->withUser(...) lub ->forUser(...).
+            'user_id' => User::factory(),
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'position' => [
@@ -46,7 +48,7 @@ class ProfileFactory extends Factory
     }
 
     /**
-     * State for specific user
+     * State for specific user (jawne przypisanie istniejącego użytkownika).
      */
     public function forUser(User $user): static
     {
@@ -54,5 +56,21 @@ class ProfileFactory extends Factory
             'user_id' => $user->id,
             'mail' => $user->email, // Używamy email użytkownika
         ]);
+    }
+
+    /**
+     * Czytelny stan do powiązania profilu z użytkownikiem:
+     * - bez parametru utworzy nowego użytkownika (używając User::factory())
+     * - z przekazanym modelem User podłączy istniejącego.
+     *
+     * Przykłady:
+     * Profile::factory()->withUser()->create(); // tworzy usera i przypina
+     * Profile::factory()->withUser($user)->create(); // przypina istniejącego usera
+     */
+    public function withUser(?User $user = null): static
+    {
+        return $user
+            ? $this->for($user, 'user')
+            : $this->for(User::factory(), 'user');
     }
 }
