@@ -29,6 +29,7 @@ local-build-overwrite: container-stop overwrite-env-local
 	echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
 	cp docker-compose.local.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
+	make install
 
 overwrite-env-local:
 	cp .env.local src/.env; \
