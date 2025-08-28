@@ -6,7 +6,7 @@
 @layer base {
     body, p {
         @apply min-h-screen flex flex-col md:block text-white-700 bg-black-400;
-        @apply text-sm md:text-md lg:text-lg;
+        @apply text-md lg:text-lg;
     }
     main {
         @apply flex-1;
