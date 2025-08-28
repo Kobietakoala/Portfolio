@@ -27,7 +27,7 @@
 </head>
 <body class="font-sans antialiased bg-white">
 <!-- Navigation -->
-<nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50">
+<nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50  hidden md:block">
     @yield('navigation')
 </nav>
 

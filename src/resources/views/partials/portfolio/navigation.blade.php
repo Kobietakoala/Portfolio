@@ -1,4 +1,4 @@
-<nav class="container py-3">
+<nav id="main-nav" class="container py-3  hidden md:block">
     <div class="d-flex align-items-center justify-content-between">
         <a href="#"
            class="fw-semibold text-decoration-none text-dark"
@@ -41,6 +41,10 @@
     </div>
 
     <style>
+        @media (max-width: theme('screens.md')) {
+            #main-nav { display: none !important; }
+        }
+
         .nav .nav-link { color: #111827; padding: .5rem .75rem; border-radius: .375rem; }
         .nav .nav-link.is-active { color: #0d6efd; background: rgba(13,110,253,.08); }
         .nav .nav-link:hover { color: #0d6efd; text-decoration: none; }
@@ -56,7 +60,6 @@
                 });
             };
 
-            // Smooth scroll on click (bez ostrzeżeń @click)
             links.forEach(a => {
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -69,7 +72,6 @@
                 });
             });
 
-            // Scroll spy via IntersectionObserver
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) setActive(entry.target.id);
@@ -81,7 +83,6 @@
                 if (el) observer.observe(el);
             });
 
-            // Ustaw aktywną pozycję z hash, jeśli istnieje
             const initial = location.hash ? location.hash.replace('#','') : 'home';
             setActive(initial);
         })();
