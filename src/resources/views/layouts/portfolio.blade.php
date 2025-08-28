@@ -27,21 +27,25 @@
 </head>
 <body class="font-sans antialiased">
 <!-- Navigation -->
-<nav class="fixed top-0 w-full backdrop-blur-md border-b border-gray-200 hidden md:block">
-    @yield('navigation')
-</nav>
 
-<header>
-    @yield('header')
-</header>
+<div class="mx-auto min-h-screen max-w-screen-xl px-6 py-12 md:px-12 md:py-16 lg:py-0">
+    <nav class="fixed top-0 w-full backdrop-blur-md border-b border-gray-200 hidden md:block">
+        @yield('navigation')
+    </nav>
 
-<main class="pt-0 md:pt-16">
-    @yield('content')
-</main>
+    <header>
+        @yield('header')
+    </header>
 
-<footer class="bg-gray-800 text-white py-12">
-    @yield('footer')
-</footer>
+    <main class="pt-0 md:pt-16">
+        @yield('content')
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+        @yield('footer')
+    </footer>
+</div>
+
 
 </body>
 </html>
