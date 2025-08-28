@@ -25,9 +25,9 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
 </head>
-<body class="font-sans antialiased bg-white">
+<body class="font-sans antialiased">
 <!-- Navigation -->
-<nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-200 z-50  hidden md:block">
+<nav class="fixed top-0 w-full backdrop-blur-md border-b border-gray-200 hidden md:block">
     @yield('navigation')
 </nav>
 
@@ -35,7 +35,7 @@
     @yield('header')
 </header>
 
-<main class="pt-16">
+<main class="pt-0 md:pt-16">
     @yield('content')
 </main>
 
