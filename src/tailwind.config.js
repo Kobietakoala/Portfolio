@@ -18,7 +18,7 @@ export default {
             fontSize: {
                 xs: '0.75rem',
                 sm: 'clamp(10px, calc(10.00px + 0px), 10px)',
-                md: 'clamp(14px, calc(14.00px + 0.00vw), 14px)',
+                md: 'clamp(14px, calc(14.00px + 0.01vw), 18px)',
                 lg: 'clamp(18px, calc(3.71px + 3.81vw), 22px)'
             },
             screens: {
