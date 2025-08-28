@@ -242,7 +242,7 @@ npm-build:
 	docker-compose exec app npm run build
 
 npm-watch:
-	docker-compose exec app npm run dev -- --watch
+	docker-compose exec app npm run dev --watch
 
 npm-hot:
 	docker-compose exec app npm run hot
