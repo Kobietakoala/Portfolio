@@ -245,7 +245,7 @@ npm-watch:
 	docker-compose exec app npm run dev --watch
 
 npm-hot:
-	docker-compose exec app npm run hot
+	docker-compose exec app npm run dev --hot
 
 # Uruchom Vite dev server w trybie watch (nie blokuje terminala)
 vite-dev:
