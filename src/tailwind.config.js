@@ -13,7 +13,13 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', ...defaultTheme.fontFamily.sans],
+            },
+            fontSize: {
+                xs: '0.75rem',
+                sm: 'clamp(10px, calc(10.00px + 0px), 10px)',
+                md: 'clamp(14px, calc(14.00px + 0.00vw), 14px)',
+                lg: 'clamp(18px, calc(3.71px + 3.81vw), 22px)'
             },
             screens: {
                 sm: '640px',
@@ -21,30 +27,43 @@ export default {
                 lg: '1024px',
             },
             colors: {
-                primary: {
-                    50: '#eff6ff',
-                    100: '#dbeafe',
-                    200: '#bfdbfe',
-                    300: '#93c5fd',
-                    400: '#60a5fa',
-                    500: '#3b82f6',
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e40af',
-                    900: '#1e3a8a',
+                white: {
+                    100: '#fff',
+                    600: '#f2f2f2',
+                    700: '#e6e6e6',
+                    800: '#d9d9d9',
+                    900: '#ccc',
                 },
-                secondary: {
-                    50: '#faf5ff',
-                    100: '#f3e8ff',
-                    200: '#e9d5ff',
-                    300: '#d8b4fe',
-                    400: '#c084fc',
-                    500: '#a855f7',
-                    600: '#9333ea',
-                    700: '#7c3aed',
-                    800: '#6b21a8',
-                    900: '#581c87',
+                black: {
+                    100: '#333',
+                    200: '#262626',
+                    300: '#1a1a1a',
+                    400: '#0d0d0d',
+                    900: '#000',
                 },
+                gray: {
+                    100: '#EDF2F7',
+                    200: '#E2E8F0',
+                    300: '#CBD5E0',
+                    400: '#A0AEC0',
+                    500: '#718096',
+                    600: '#4A5568',
+                    700: '#2D3748',
+                    800: '#1A202C',
+                    900: '#171923',
+                },
+                whiteAlpha: {
+                    50:  'rgba(255, 255, 255, 0.04)',
+                    100: 'rgba(255, 255, 255, 0.06)',
+                    200: 'rgba(255, 255, 255, 0.08)',
+                    300: 'rgba(255, 255, 255, 0.16)',
+                    400: 'rgba(255, 255, 255, 0.24)',
+                    500: 'rgba(255, 255, 255, 0.36)',
+                    600: 'rgba(255, 255, 255, 0.48)',
+                    700: 'rgba(255, 255, 255, 0.64)',
+                    800: 'rgba(255, 255, 255, 0.80)',
+                    900: 'rgba(255, 255, 255, 0.92)',
+                }
             },
             spacing: {
                 '18': '4.5rem',
@@ -64,8 +83,5 @@ export default {
 
     plugins: [
         forms,
-        // Możesz dodać więcej pluginów:
-        // require('@tailwindcss/typography'),
-        // require('@tailwindcss/aspect-ratio'),
     ],
 };
