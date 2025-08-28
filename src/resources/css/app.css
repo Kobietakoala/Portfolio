@@ -68,3 +68,13 @@
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-600;
 }
+
+@layer base {
+    body {
+        @apply min-h-screen flex flex-col md:block;
+    }
+    main {
+        @apply flex-1;
+    }
+}
+

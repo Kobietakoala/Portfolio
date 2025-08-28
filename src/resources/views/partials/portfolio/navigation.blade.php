@@ -1,5 +1,5 @@
-<nav id="main-nav" class="container py-3  hidden md:block">
-    <div class="d-flex align-items-center justify-content-between">
+<nav id="main-nav" class="container mx-auto py-3">
+    <div class="flex items-center justify-between">
         <a href="#"
            class="fw-semibold text-decoration-none text-dark"
            data-scroll-to="home">
