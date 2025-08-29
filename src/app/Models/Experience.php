@@ -27,8 +27,6 @@ class Experience extends Model
 {
     use HasFactory, HasUuids, HasTranslations;
 
-    protected $table = 'experience';
-
     protected $keyType = 'string';
     public $incrementing = false;
 
