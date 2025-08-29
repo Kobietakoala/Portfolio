@@ -20,7 +20,7 @@
 
         @if($profileData['position'])
             <h3 class="profile-position text-muted">
-                {{ $profileData['position']['position_en'] ?? $profileData['position']['position_pl'] ?? 'No position' }}
+                {{ $profileData['position'] }}
             </h3>
         @endif
     </div>
