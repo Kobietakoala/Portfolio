@@ -27,7 +27,7 @@ class SkillService
                     'url' => $category->getAttribute('logo')->getUrlAttribute(),
                     'mime_type' => $category->getAttribute('logo')->mime_type,
                 ] : null,
-                'skills' => $category->getSkills(),
+                'skills' => $category->getSkillsName(),
             ];
         })->toArray();
     }

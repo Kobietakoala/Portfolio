@@ -57,7 +57,7 @@ class SkillCategory extends Model
         return $this->hasMany(Skill::class, 'category');
     }
 
-    public function getSkills(): array
+    public function getSkillsName(): array
     {
         return $this->skills->map(function($skill) {
             if (is_array($skill->name)) {
