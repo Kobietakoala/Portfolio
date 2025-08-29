@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Models\File;
 use App\Models\SkillCategory;
 
 class SkillService
@@ -21,7 +22,7 @@ class SkillService
                 'name' => is_array($category->name) ?
                     $category->getTranslation('name', app()->getLocale()) :
                     $category->getAttribute('name'),
-                'logo' => $category->getAttribute('logo') ? [
+                'logo' => $category->getAttribute('logo') instanceof File ? [
                     'id' => $category->getAttribute('logo')->id,
                     'filename' => $category->getAttribute('logo')->filename,
                     'url' => $category->getAttribute('logo')->getUrlAttribute(),
