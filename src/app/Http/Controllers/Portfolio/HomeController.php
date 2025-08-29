@@ -22,7 +22,7 @@ class HomeController extends Controller
     #[Route('/', methods: ['GET'], name: 'home')]
     public function index()
     {
-        $profileData = $this->profileService->getProfileData();
+        $profileData = $this->profileService->getCachedProfileData();
         return view('portfolio.home', compact('profileData'));
     }
 }
