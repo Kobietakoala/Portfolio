@@ -29,6 +29,7 @@ local-build-overwrite: container-stop overwrite-env-local
 	echo "Kopiowanie docker-compose.local.yml do docker-compose.yml"; \
 	cp docker-compose.local.yml docker-compose.yml; \
 	docker-compose -f docker-compose.yml up -d --build
+	make install
 
 overwrite-env-local:
 	cp .env.local src/.env; \
@@ -146,6 +147,43 @@ install:
 	@echo "Projekt gotowy! Aplikacja dostępna pod: http://localhost:8000"
 
 # =================================
+# Database Seeding
+# =================================
+
+# Seed database with fake data
+seed-fake:
+	@echo "🌱 Wypełnianie bazy danymi testowymi..."
+	docker-compose exec app php artisan migrate:fresh --seed
+	@echo "✅ Baza wypełniona danymi testowymi!"
+
+# Seed only without migration
+seed-only:
+	docker-compose exec app php artisan db:seed
+
+# Create fresh database with fake data
+fresh-seed:
+	@echo "🗑️  Czyszczenie bazy i wypełnianie danymi testowymi..."
+	docker-compose exec app php artisan migrate:fresh --seed
+	@echo "✅ Gotowe!"
+
+# Quick seed for development (with specific seeders)
+seed-run:
+	docker-compose exec app php artisan db:seed --class=$(name)
+
+# Create seeders
+seeder:
+	docker-compose exec app php artisan make:seeder $(name)
+
+# Tinker for manual testing
+tinker-seed:
+	@echo "Przykładowe komendy do tinker:"
+	@echo "User::factory(10)->create();"
+	@echo "Company::factory(5)->create();"
+	@echo "File::factory()->image()->create();"
+	make tinker
+
+
+# =================================
 # Zarządzanie kontenerami
 # =================================
 
@@ -205,10 +243,10 @@ npm-build:
 	docker-compose exec app npm run build
 
 npm-watch:
-	docker-compose exec app npm run dev -- --watch
+	docker-compose exec app npm run dev --watch
 
 npm-hot:
-	docker-compose exec app npm run hot
+	docker-compose exec app npm run dev --hot
 
 # Uruchom Vite dev server w trybie watch (nie blokuje terminala)
 vite-dev:
@@ -228,11 +266,23 @@ migrate:
 migrate-fresh:
 	docker-compose exec app php artisan migrate:fresh --seed
 
+migrate-fresh-no-seed:
+	docker-compose exec app php artisan migrate:fresh
+
 migrate-rollback:
 	docker-compose exec app php artisan migrate:rollback
 
 seed:
 	docker-compose exec app php artisan db:seed
+
+model:
+	docker-compose exec app php artisan make:model $(n)
+
+factory:
+	docker-compose exec app php artisan make:factory $(n)
+
+migration:
+	docker-compose exec app php artisan make:migration $(n)
 
 # Cache
 cache-clear:
