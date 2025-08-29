@@ -29,7 +29,7 @@
                                             <div class="d-flex flex-wrap gap-2">
                                                 @foreach($skillCategory['skills'] as $skill)
                                                     <span class="badge bg-primary rounded-pill">
-                                                        {{ is_array($skill) ? $skill['name'] ?? $skill : $skill }}
+                                                        {{ $skill }}
                                                     </span>
                                                 @endforeach
                                             </div>
