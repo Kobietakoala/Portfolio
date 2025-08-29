@@ -95,7 +95,7 @@ class Experience extends Model
         $startDate = $this->since->format('m/Y');
         $endDate = $this->until
             ? $this->until->format('m/Y')
-            : __('enums.experience.present');
+            : __('models.experience.status.current');
         return $startDate . ' - ' . $endDate;
     }
 
