@@ -22,15 +22,6 @@ class ProfileService
         });
     }
 
-    /**
-     * @TODO remove
-     * @return array|null
-     */
-    public function getProfileData(): ?array
-    {
-        return $this->fetchProfileData();
-    }
-
     public static function clearProfileCache(): void
     {
         Cache::forget(self::CACHE_KEY_PROFILE);
