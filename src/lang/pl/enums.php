@@ -11,8 +11,9 @@ return [
     ],
 
     'file_status' => [
-        0 => 'Aktywny',
-        1 => 'Usunięty',
+        0 => 'Oczekujący',
+        1 => 'Aktywny',
+        8 => 'Usunięty',
         9 => 'Zarchiwizowany',
     ],
 
